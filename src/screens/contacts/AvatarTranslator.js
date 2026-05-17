@@ -27,10 +27,15 @@ export default function AvatarTranslator({ contact }) {
       });
       setSequence(newSeq);
     } else {
-      const words = text.toUpperCase().split(' ');
+      const words = text.toUpperCase().split(/\s+/);
       const newSeq = words.map(w => {
-        const found = ALEX_DICTIONARY.find(item => item.original === w || item.synonymes?.map(s=>s.toUpperCase()).includes(w));
-        if (found) return { type: 'video', src: found.url, word: w };
+        const cleanWord = w.replace(/[^A-Z0-9-_]/g, '');
+        if (!cleanWord) return null;
+        const found = ALEX_DICTIONARY.find(item =>
+          item.original.toUpperCase() === cleanWord ||
+          item.synonymes?.map(s => s.toUpperCase()).includes(cleanWord)
+        );
+        if (found) return { type: 'video', src: found.url, word: cleanWord };
         return null;
       }).filter(Boolean);
       setSequence(newSeq);
@@ -51,7 +56,7 @@ export default function AvatarTranslator({ contact }) {
     return (
       <View style={styles.selContainer}>
         <Text style={styles.selTitle}>Choisissez votre Avatar</Text>
-        
+
         <TouchableOpacity style={styles.selCard} onPress={() => setAvatar('frizitta')}>
           <Text style={styles.avatarName}>🖐 FRIZITTA</Text>
           <Text style={styles.avatarDesc}>Avatar des lettres</Text>
@@ -85,7 +90,7 @@ export default function AvatarTranslator({ contact }) {
             avatar === 'frizitta' ? (
               <Image source={{ uri: currentMedia.src }} style={styles.media} resizeMode="contain" />
             ) : (
-              <Video 
+              <Video
                 source={{ uri: currentMedia.src }}
                 style={styles.media}
                 resizeMode="cover"
@@ -99,7 +104,7 @@ export default function AvatarTranslator({ contact }) {
               />
             )
           ) : (
-            <Text style={{color: '#9ca3af'}}>En attente de traduction...</Text>
+            <Text style={{ color: '#9ca3af' }}>En attente de traduction...</Text>
           )}
         </View>
         {playing && currentMedia && (
@@ -110,9 +115,9 @@ export default function AvatarTranslator({ contact }) {
       </View>
 
       <View style={styles.inputArea}>
-        <TextInput 
-          style={styles.input} 
-          placeholder="Texte à traduire..." 
+        <TextInput
+          style={styles.input}
+          placeholder="Texte à traduire..."
           placeholderTextColor="#6b7280"
           value={text}
           onChangeText={setText}
@@ -138,17 +143,17 @@ const styles = StyleSheet.create({
   avatarName: { color: '#fff', fontSize: 20, fontWeight: 'bold' },
   avatarDesc: { color: '#22c55e', fontSize: 14, marginBottom: 12 },
   avatarInfo: { color: '#9ca3af', lineHeight: 22 },
-  
+
   container: { flex: 1 },
   header: { flexDirection: 'row', justifyContent: 'space-between', padding: 16, alignItems: 'center' },
   changeBtn: { color: '#3b82f6', fontWeight: 'bold' },
   headerTitle: { color: '#fff', fontSize: 16, fontWeight: 'bold' },
-  
+
   avatarZone: { flex: 1, backgroundColor: '#0a0a0a', padding: 20, alignItems: 'center', justifyContent: 'center' },
-  avatarInner: { width: '100%', aspectRatio: 9/16, backgroundColor: '#fff', borderRadius: 16, overflow: 'hidden', alignItems: 'center', justifyContent: 'center' },
+  avatarInner: { width: '100%', aspectRatio: 9 / 16, backgroundColor: '#fff', borderRadius: 16, overflow: 'hidden', alignItems: 'center', justifyContent: 'center' },
   media: { width: '100%', height: '100%' },
   progressText: { color: '#fff', marginTop: 12, fontWeight: 'bold' },
-  
+
   inputArea: { padding: 16, backgroundColor: '#111827', borderTopWidth: 1, borderTopColor: '#1f2937' },
   input: { backgroundColor: '#374151', borderRadius: 12, padding: 16, color: '#fff', minHeight: 80, textAlignVertical: 'top', marginBottom: 12 },
   controlsRow: { flexDirection: 'row' },

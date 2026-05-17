@@ -17,6 +17,9 @@ import RegisterScreen from './src/screens/RegisterScreen';
 import ForgotPasswordScreen from './src/screens/ForgotPasswordScreen';
 import ChooseAvatarScreen from './src/screens/ChooseAvatarScreen';
 import MainTabNavigator from './src/navigation/MainTabNavigator';
+import ContactDetail from './src/screens/contacts/ContactDetail';
+import CallScreen from './src/screens/contacts/CallScreen';
+import CallEndedScreen from './src/screens/contacts/CallEndedScreen';
 
 const Stack = createNativeStackNavigator();
 
@@ -54,6 +57,9 @@ function DemoNavigator() {
       <Stack.Screen name="ForgotPassword" component={ForgotPasswordScreen} />
       <Stack.Screen name="ChooseAvatar" component={ChooseAvatarScreen} />
       <Stack.Screen name="MainTabs" component={MainTabNavigator} />
+      <Stack.Screen name="ContactDetail" component={ContactDetail} />
+      <Stack.Screen name="CallScreen" component={CallScreen} />
+      <Stack.Screen name="CallEndedScreen" component={CallEndedScreen} />
     </Stack.Navigator>
   );
 }

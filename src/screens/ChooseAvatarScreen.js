@@ -14,7 +14,7 @@ import {
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
-import { doc, updateDoc } from 'firebase/firestore';
+import { doc, updateDoc, setDoc } from 'firebase/firestore';
 import { auth, db } from '../config/firebase';
 import PrimaryButton from '../components/PrimaryButton';
 import { Colors } from '../theme/colors';
@@ -106,10 +106,22 @@ export default function ChooseAvatarScreen({ navigation }) {
     if (!selected) return;
     setLoading(true);
     try {
-      // MODE DÉMO : Navigation directe
-      await new Promise((resolve) => setTimeout(resolve, 800));
+      const uid = auth.currentUser?.uid || 'demo-user-deaf';
+      try {
+        await updateDoc(doc(db, 'users', uid), {
+          avatarStyle: selected,
+          isFirstLogin: false
+        });
+      } catch (dbErr) {
+        console.log("Firestore error, trying setDoc instead:", dbErr);
+        await setDoc(doc(db, 'users', uid), {
+          avatarStyle: selected,
+          isFirstLogin: false
+        }, { merge: true });
+      }
       navigation.reset({ index: 0, routes: [{ name: 'MainTabs' }] });
-    } catch {
+    } catch (err) {
+      console.log('Error confirming choice:', err);
       Alert.alert('Erreur', 'Impossible de sauvegarder votre choix.');
     } finally {
       setLoading(false);
