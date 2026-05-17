@@ -9,6 +9,8 @@ import RencontreScreen from '../screens/RencontreScreen';
 import UrgenceScreen from '../screens/UrgenceScreen';
 import HistoriqueScreen from '../screens/HistoriqueScreen';
 import SettingsScreen from '../screens/SettingsScreen';
+import CallNotificationBanner from '../components/CallNotificationBanner';
+import { useNotifications } from '../hooks/useNotifications';
 
 const Tab = createBottomTabNavigator();
 
@@ -40,9 +42,16 @@ function TabBadge({ visible, count, isPulse }) {
 }
 
 export default function MainTabNavigator() {
+  const { incomingCall, clearNotification } = useNotifications('current-user-123');
+
   return (
-    <Tab.Navigator
-      initialRouteName="Accueil"
+    <View style={{ flex: 1 }}>
+      <CallNotificationBanner 
+        incomingCall={incomingCall} 
+        onDismiss={clearNotification} 
+      />
+      <Tab.Navigator
+        initialRouteName="Accueil"
       screenOptions={({ route }) => ({
         headerShown: false,
         tabBarStyle: styles.tabBar,
@@ -111,7 +120,8 @@ export default function MainTabNavigator() {
           tabBarIcon: ({ color, focused }) => <TabIcon name={focused ? 'settings' : 'settings-outline'} focused={focused} />,
         }}
       />
-    </Tab.Navigator>
+      </Tab.Navigator>
+    </View>
   );
 }
 

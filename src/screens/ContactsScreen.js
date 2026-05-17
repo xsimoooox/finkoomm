@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, SafeAreaView, Platform, StatusBar } from 'react-native';
 import { Colors } from '../theme/colors';
 
@@ -7,9 +7,15 @@ import AudioText from './contacts/AudioText';
 import CallText from './contacts/CallText';
 import AvatarTranslator from './contacts/AvatarTranslator';
 
-export default function ContactsScreen() {
-  const [activeTab, setActiveTab] = useState('Contacts');
+export default function ContactsScreen({ route }) {
+  const [activeTab, setActiveTab] = useState(route?.params?.screen === 'CallText' ? 'CallText' : 'Contacts');
   const [selectedContact, setSelectedContact] = useState(null);
+
+  useEffect(() => {
+    if (route?.params?.screen === 'CallText') {
+      setActiveTab('CallText');
+    }
+  }, [route?.params?.screen]);
 
   const handleAction = (tabName, contact) => {
     setSelectedContact(contact);
@@ -23,7 +29,7 @@ export default function ContactsScreen() {
       case 'AudioText':
         return <AudioText contact={selectedContact} />;
       case 'CallText':
-        return <CallText contact={selectedContact} />;
+        return <CallText contact={selectedContact} autoJoinCode={route?.params?.params?.autoJoinCode} />;
       case 'Avatar':
         return <AvatarTranslator contact={selectedContact} />;
       default:
